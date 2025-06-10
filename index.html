@@ -55,6 +55,25 @@
             padding: 2px 5px;
             font-weight: bold;
         }
+        #countResult {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
         footer {
             margin-top: 50px;
             padding-top: 20px;
@@ -102,13 +121,16 @@
         <img src="/static/podsDolnySlask.png" alt="Zestawienie nauczanych języków obcych w podstawówkach województwie dolnośląskim">
     </section>
 
+    <p><button id="countSpanishBtn">Pokaż liczbę uczniów uczących się hiszpańskiego w liceach na Dolnym Śląsku</button></p>
+    <p id="countSpanishResult"></p>
+
     <section id="japanese-chart">
         <h2>4. Ciekawostka: Popularność języka japońskiego w Polsce</h2>
         <div class="chart-description">
             <p>Wykres przedstawia rozkład nauczania języka japońskiego z podziałem na poszczególne województwa w których jest on nauczany.</p>
             <p>Największą wartość uczniów uczących się tego języka odnotowano w województwie łódzkim (ponad 200 osób).</p>
             <p>Najniższą natomiast liczbą uczniów wykazuje się województwo dolnośląskie, gdzie jest to niecałe 10 osób.</p>
-            <p>Zaobserwowano również nauczanie japońskiego w szkołach w województwach (kolejno od największej liczby uczniów): mazowieckim, śląskim, wielkopolskim i małopolskim</p>
+            <p>Zaobserowano również nauczanie japońskiego w szkołach w województwach (kolejno od największej liczby uczniów): mazowieckim, śląskim, wielkopolskim i małopolskim</p>
         </div>
         <img src="/static/japonski.png" alt="Wykres przedstawiający liczbę uczniów uczących się języka japońskiego w województwach">
     </section>
@@ -117,6 +139,9 @@
         <h2>5. Język niemiecki w polskich szkołach</h2>
         <div class="chart-description">
             <p>Język niemiecki nadal pozostaje on drugim najczęściej nauczanym językiem w Polsce. W niektórych regionach zachodnich jego popularność jest nawet wyższa niż angielskiego w szkołach zawodowych.</p>
+            <p>Naciśnij przycisk poniżej, aby poznać aktualną liczbę uczniów uczących się języka niemieckiego w polskich szkołach:</p>
+            <button id="countGermanBtn">Pokaż liczbę uczniów niemieckiego</button>
+            <p id="countResult"></p>
             <p>Warto zauważyć, że w ostatnich latach obserwujemy wyraźną korelację między nauczaniem języka niemieckiego a typem szkoły - w technikach i szkołach branżowych odsetek uczniów niemieckiego jest średnio o 15% wyższy niż w liceach ogólnokształcących.</p>
         </div>
     </section>
@@ -140,5 +165,46 @@
         <p>Raport przygotowany na podstawie danych GOV w ramach projektu z  przedmiotu Przetwarzanine Danych Masowych w Chmurze</p>
         <p>Wykonały: Marta Mączyńska (273761) oraz Zuzanna Niwińska (273720), geoinformatyka, 6 semestr </p>
     </footer>
+
+    <script>
+        document.getElementById("countGermanBtn").addEventListener("click", function() {
+            fetch("/ile-niemiecki")  // Poprawiona ścieżka zgodna z backendem Flask
+                .then(response => response.json())
+                .then(data => {
+                    if (data.count !== undefined) {
+                        document.getElementById("countResult").innerText =
+                            "W roku szkolnym 2024/2025 języka niemieckiego uczy się " +
+                            data.count.toLocaleString('pl-PL') +
+                            " uczniów w Polsce.";
+                    } else {
+                        document.getElementById("countResult").innerText = "Brak danych o liczbie uczniów.";
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("countResult").innerText = "Błąd połączenia z serwerem. Spróbuj ponownie później.";
+                });
+        });
+    </script>
+
+    <script>
+        document.getElementById("countSpanishBtn").addEventListener("click", function() {
+            fetch("/ile-hiszpanski-dolnoslaskie-licea")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.count !== undefined) {
+                        document.getElementById("countSpanishResult").innerText =
+                            "W roku szkolnym 2024/2025 języka hiszpańskiego uczy się " +
+                            data.count.toLocaleString('pl-PL') +
+                            " uczniów liceów w województwie dolnośląskim.";
+                    } else {
+                        document.getElementById("countSpanishResult").innerText = "Brak danych o liczbie uczniów.";
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("countSpanishResult").innerText = "Błąd połączenia z serwerem.";
+                });
+        });
+    </script>
+
 </body>
 </html>
